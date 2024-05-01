@@ -1,0 +1,58 @@
+services:
+  mariadb:
+    image: mariadb:10.9.5-jammy
+    container_name: mariadb-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=mydatabase
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=password
+      # - MYSQL_ROOT_HOST=localhost
+      # - MYSQL_ROOT_PASSWORD=root_password
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=yes
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  postgre:
+    image: postgres:15.0-alpine3.16
+    container_name: postgresql
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  mssql:
+    container_name: sql-server
+    build: ./sql-server
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Root1234"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-server:/var/opt/mssql
+  oraclexe:
+    build: ./oracle-xe-11g
+    container_name: oracle
+    restart: always
+    ports:
+      - 1521:1521
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+    # env_file:
+    #   - ./.env
+    environment:
+      - ORACLE_PASSWORD=iamoracle
+
+volumes:
+  mysql_data:
+  postgres_data:
+  mssql-server:
+  oracle_data:
